@@ -1,0 +1,5 @@
+spring:
+  config:
+    name: small-payment
+  profiles:
+    active: dev

@@ -3,3 +3,10 @@ spring:
     name: small-payment
   profiles:
     active: dev
+
+
+wechat:
+  config:
+    appId: wx60369d03d18f7e48
+    originalId: gh_db621d80a70e
+    token: "ezreal"

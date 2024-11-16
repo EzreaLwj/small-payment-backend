@@ -7,6 +7,7 @@ spring:
 
 wechat:
   config:
-    appId: wx60369d03d18f7e48
-    originalId: gh_db621d80a70e
+    appId: wx1828227708d0fa29
+    secret: 7b118c7ad626df7f2c630bd99fd17aa5
+    originalId: gh_ffe6988c3a20
     token: "ezreal"

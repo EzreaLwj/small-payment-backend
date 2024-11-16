@@ -3,10 +3,13 @@ package com.ezreal.small.payment.controller;
 import com.ezreal.small.payment.common.wechat.MessageTextEntity;
 import com.ezreal.small.payment.common.wechat.SignUtils;
 import com.ezreal.small.payment.common.wechat.XmlUtil;
+import com.ezreal.small.payment.service.WechatLoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author Ezreal
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
+@RequestMapping("/wechat")
 public class WeChatController {
 
     @Value("${wechat.config.token}")
@@ -22,7 +26,10 @@ public class WeChatController {
     @Value("${wechat.config.originalId}")
     private String originalId;
 
-    @GetMapping(value = "/wechat/verify", produces = "text/plain;charset=utf-8")
+    @Resource
+    private WechatLoginService wechatLoginService;
+
+    @GetMapping(value = "/verify", produces = "text/plain;charset=utf-8")
     public String verify(@RequestParam(value = "signature", required = false) String signature,
                          @RequestParam(value = "timestamp", required = false) String timestamp,
                          @RequestParam(value = "nonce", required = false) String nonce,
@@ -42,13 +49,20 @@ public class WeChatController {
         return null;
     }
 
-    @PostMapping(value = "/wechat/verify", produces = "text/plain;charset=utf-8")
+    @PostMapping(value = "/verify", produces = "text/plain;charset=utf-8")
     public String receive(@RequestBody String body,
                           @RequestParam(value = "timestamp", required = false) String timestamp,
                           @RequestParam(value = "openid", required = false) String openid) {
-        log.info("接受微信公众的消息：{}，openid（fromUserId）：{}，timestamp：{}", body, openid, timestamp);
+        log.info("接受微信公众号的消息：{}，openid（fromUserId）：{}，timestamp：{}", body, openid, timestamp);
         MessageTextEntity wechatMessageContent = XmlUtil.xmlToBean(body, MessageTextEntity.class);
-        return buildReturnWechatMessage(wechatMessageContent.getFromUserName(), "hello world");
+        if ("event".equals(wechatMessageContent.getMsgType()) && "SCAN".equals(wechatMessageContent.getEvent())) {
+            // 关注公众号，扫码登录，返回消息
+            String ticket = wechatMessageContent.getTicket();
+            log.info("ticket：{}", ticket);
+            wechatLoginService.saveLoginState(ticket, openid);
+            return buildReturnWechatMessage(wechatMessageContent.getFromUserName(), "登录成功");
+        }
+        return buildReturnWechatMessage(wechatMessageContent.getFromUserName(), wechatMessageContent.getFromUserName() + "，你好");
     }
 
     private String buildReturnWechatMessage(String openid, String content) {

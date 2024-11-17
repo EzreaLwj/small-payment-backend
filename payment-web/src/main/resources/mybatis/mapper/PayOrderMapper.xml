@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezreal.small.payment.dao.mapper.PayOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.ezreal.small.payment.domain.po.PayOrder">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderTime" column="order_time" jdbcType="TIMESTAMP"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="payUrl" column="pay_url" jdbcType="VARCHAR"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,product_id,
+        product_name,order_id,order_time,
+        total_amount,status,pay_url,
+        pay_time,create_time,update_time
+    </sql>
+    <select id="queryUnPaidOrder" resultMap="BaseResultMap">
+        select id,
+               user_id,
+               product_id,
+               product_name,
+               order_id,
+               order_time,
+               total_amount,
+               status,
+               pay_url,
+               pay_time,
+               create_time,
+               update_time
+        from pay_order
+        where user_id = #{userId,jdbcType=VARCHAR}
+          AND product_id = #{productId,jdbcType=VARCHAR}
+        order by id desc
+        limit 1
+    </select>
+    <insert id="insertSelective">
+        insert into pay_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null">product_name,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="orderTime != null">order_time,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="status != null">status,</if>
+            <if test="payUrl != null">pay_url,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="userId != null">#{userId,jdbcType=VARCHAR},</if>
+            <if test="productId != null">#{productId,jdbcType=VARCHAR},</if>
+            <if test="productName != null">#{productName,jdbcType=VARCHAR},</if>
+            <if test="orderId != null">#{orderId,jdbcType=VARCHAR},</if>
+            <if test="orderTime != null">#{orderTime,jdbcType=TIMESTAMP},</if>
+            <if test="totalAmount != null">#{totalAmount,jdbcType=DECIMAL},</if>
+            <if test="status != null">#{status,jdbcType=VARCHAR},</if>
+            <if test="payUrl != null">#{payUrl,jdbcType=VARCHAR},</if>
+            <if test="payTime != null">#{payTime,jdbcType=TIMESTAMP},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+</mapper>

@@ -15,6 +15,19 @@ public interface OrderService {
      * @param shopCardReq 请求参数
      * @return 订单信息
      */
-    CreateOrderResp createOrder(ShopCardReq shopCardReq);
+    CreateOrderResp createOrder(ShopCardReq shopCardReq) throws Exception;
 
+    /**
+     * 更新订单状态为支付成功
+     *
+     * @param tradeNo 交易流水号
+     */
+    void changeSuccessStatus(String tradeNo);
+
+    /**
+     * 更新订单状态为支付成功
+     *
+     * @param tradeNo 交易流水号
+     */
+    void changeFailStatus(String tradeNo);
 }

@@ -1,4 +1,5 @@
 package com.ezreal.small.payment.dao.mapper;
+
 import org.apache.ibatis.annotations.Param;
 import com.ezreal.small.payment.domain.po.PayOrder;
 
@@ -16,4 +17,10 @@ public interface PayOrderMapper {
     PayOrder queryUnPaidOrder(@Param("userId") String userId, @Param("productId") String productId);
 
     int insertSelective(PayOrder payOrder);
+
+    void changePayWaitStatus(@Param("payOrder") PayOrder payOrder);
+
+    void changeSuccessStatus(@Param("tradeNo") String tradeNo);
+
+    void changeFailStatus(@Param("tradeNo") String tradeNo);
 }

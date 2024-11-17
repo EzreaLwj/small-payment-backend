@@ -22,9 +22,9 @@ public class OrderServiceTest {
     private OrderService orderService;
 
     @Test
-    public void createOrder() {
+    public void createOrder() throws Exception {
         ShopCardReq shopCardReq = new ShopCardReq();
-        shopCardReq.setProductId("10002");
+        shopCardReq.setProductId("10003");
         shopCardReq.setUserId("10001");
         CreateOrderResp createOrderResp = orderService.createOrder(shopCardReq);
         log.info("createOrderResp:{}", JSONUtil.toJsonStr(createOrderResp));

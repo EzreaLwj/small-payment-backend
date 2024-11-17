@@ -25,6 +25,29 @@
         total_amount,status,pay_url,
         pay_time,create_time,update_time
     </sql>
+
+    <update id="changePayWaitStatus" parameterType="com.ezreal.small.payment.domain.po.PayOrder">
+        update pay_order
+        set status   = #{payOrder.status,jdbcType=VARCHAR},
+            pay_time = #{payOrder.payTime,jdbcType=TIMESTAMP},
+            pay_url  = #{payOrder.payUrl,jdbcType=VARCHAR}
+        where order_id = #{payOrder.orderId,jdbcType=VARCHAR}
+          and status = 'CREATE'
+    </update>
+    <update id="changeSuccessStatus">
+        update pay_order
+        set status = 'PAY_SUCCESS'
+        where order_id = #{tradeNo,jdbcType=VARCHAR}
+          and status = 'PAY_WAIT'
+    </update>
+
+    <update id="changeFailStatus">
+        update pay_order
+        set status = 'FAIL'
+        where order_id = #{tradeNo,jdbcType=VARCHAR}
+          and status = 'PAY_WAIT'
+    </update>
+
     <select id="queryUnPaidOrder" resultMap="BaseResultMap">
         select id,
                user_id,

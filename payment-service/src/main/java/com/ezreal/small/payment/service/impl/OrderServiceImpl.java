@@ -1,6 +1,7 @@
 package com.ezreal.small.payment.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
@@ -13,6 +14,7 @@ import com.ezreal.small.payment.domain.response.CreateOrderResp;
 import com.ezreal.small.payment.domain.vo.ProductVo;
 import com.ezreal.small.payment.service.OrderService;
 import com.ezreal.small.payment.service.rpc.ProductRpc;
+import com.google.common.eventbus.EventBus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Ezreal
@@ -43,6 +46,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private AlipayClient alipayClient;
+
+    @Resource
+    private EventBus eventBus;
 
     @Override
     public CreateOrderResp createOrder(ShopCardReq shopCardReq) throws Exception {
@@ -105,11 +111,27 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void changeSuccessStatus(String tradeNo) {
         payOrderMapper.changeSuccessStatus(tradeNo);
+        eventBus.post(JSON.toJSONString(tradeNo));
     }
 
     @Override
     public void changeFailStatus(String tradeNo) {
         payOrderMapper.changeFailStatus(tradeNo);
+    }
+
+    @Override
+    public void changeTimeOutStatus(String orderId) {
+        payOrderMapper.changeTimeOutStatus(orderId);
+    }
+
+    @Override
+    public List<String> queryNoPayNotifyOrderList() {
+        return payOrderMapper.queryNoPayNotifyOrderList();
+    }
+
+    @Override
+    public List<String> queryTimeOutOrderList() {
+        return payOrderMapper.queryTimeOutOrderList();
     }
 
     private PayOrder createPayOrder(String orderId, String productId, String productName, BigDecimal totalAmount, String userId) throws AlipayApiException {

@@ -5,6 +5,8 @@ import com.ezreal.small.payment.domain.po.PayOrder;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @author Ezreal
  * @description 针对表【pay_order】的数据库操作Mapper
@@ -23,4 +25,10 @@ public interface PayOrderMapper {
     void changeSuccessStatus(@Param("tradeNo") String tradeNo);
 
     void changeFailStatus(@Param("tradeNo") String tradeNo);
+
+    List<String> queryNoPayNotifyOrderList();
+
+    List<String> queryTimeOutOrderList();
+
+    void changeTimeOutStatus(String orderId);
 }

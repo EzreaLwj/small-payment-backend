@@ -47,7 +47,11 @@
         where order_id = #{tradeNo,jdbcType=VARCHAR}
           and status = 'PAY_WAIT'
     </update>
-
+    <update id="changeTimeOutStatus">
+        update pay_order
+        set status = 'CLOSE'
+        where order_id = #{tradeNo,jdbcType=VARCHAR}
+    </update>
     <select id="queryUnPaidOrder" resultMap="BaseResultMap">
         select id,
                user_id,
@@ -66,6 +70,18 @@
           AND product_id = #{productId,jdbcType=VARCHAR}
         order by id desc
         limit 1
+    </select>
+    <select id="queryNoPayNotifyOrderList" resultType="java.lang.String">
+        select order_id
+        from pay_order
+        where status = 'PAY_WAIT'
+          and now() > order_time + interval 1 minute
+    </select>
+    <select id="queryTimeOutOrderList" resultType="java.lang.String">
+        select order_id
+        from pay_order
+        where status = 'PAY_WAIT'
+          and now() > order_time + interval 30 minute
     </select>
     <insert id="insertSelective">
         insert into pay_order
